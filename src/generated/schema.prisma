@@ -1,0 +1,367 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// =====================================================================
+// ORGANIZATION
+// =====================================================================
+
+model Department {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  users    User[]
+  projects Project[]
+
+  @@map("departments")
+}
+
+// =====================================================================
+// USERS
+// =====================================================================
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  password     String
+  name         String
+  avatarUrl    String?
+  phone        String?
+  role         Role     @default(EMPLOYEE)
+  isActive     Boolean  @default(true)
+  departmentId Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department Department? @relation(fields: [departmentId], references: [id])
+
+  createdTasks  Task[] @relation("TaskCreatedBy")
+  assignedTasks Task[] @relation("TaskAssignedTo")
+  reviewedTasks Task[] @relation("TaskReviewedBy")
+
+  progressReports ProgressReport[] @relation("UserProgressReports")
+  comments        Comment[]
+  attachments     Attachment[]
+  notifications   Notification[]
+  managedProjects Project[]        @relation("ProjectManager")
+  projectMembers  ProjectMember[]
+  auditLogs       AuditLog[]
+
+  // ⬅ THÊM MỚI: lưu refresh token đã cấp cho user này (phục vụ rotation + revoke)
+  refreshTokens RefreshToken[]
+
+  @@index([departmentId])
+  @@map("users")
+}
+
+// ⬅ MODEL MỚI — bản schema cũ thiếu bảng này dù auth flow cần refresh token rotation
+model RefreshToken {
+  id        Int       @id @default(autoincrement())
+  // Không bao giờ lưu refresh token dạng plaintext — chỉ lưu hash (sha256)
+  tokenHash String    @unique
+  userId    Int
+  expiresAt DateTime
+  // null = còn hiệu lực; có giá trị = đã bị thu hồi (do rotate, logout, hoặc phát hiện reuse)
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// =====================================================================
+// PROJECTS (nhom cac task lai voi nhau)
+// =====================================================================
+
+model Project {
+  id           Int           @id @default(autoincrement())
+  name         String
+  description  String?       @db.Text
+  status       ProjectStatus @default(PLANNING)
+  startDate    DateTime?
+  endDate      DateTime?
+  departmentId Int?
+  managerId    Int?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  department Department?     @relation(fields: [departmentId], references: [id])
+  manager    User?           @relation("ProjectManager", fields: [managerId], references: [id])
+  members    ProjectMember[]
+  tasks      Task[]
+
+  @@index([departmentId])
+  @@index([managerId])
+  @@map("projects")
+}
+
+model ProjectMember {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  userId    Int
+  joinedAt  DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([projectId, userId])
+  @@map("project_members")
+}
+
+// =====================================================================
+// TASKS
+// =====================================================================
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?    @db.Text
+  difficulty  Difficulty @default(MEDIUM)
+  priority    Priority   @default(MEDIUM)
+  effort      Int
+  actualHours Float?
+  process     String?
+
+  approvalStatus ApprovalStatus @default(PENDING)
+  progressStatus ProgressStatus @default(NOT_STARTED)
+
+  startDate   DateTime?
+  dueDate     DateTime?
+  completedAt DateTime?
+
+  projectId    Int?
+  createdById  Int
+  assignedToId Int?
+  reviewedById Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project    Project? @relation(fields: [projectId], references: [id])
+  createdBy  User     @relation("TaskCreatedBy", fields: [createdById], references: [id])
+  assignedTo User?    @relation("TaskAssignedTo", fields: [assignedToId], references: [id])
+  reviewedBy User?    @relation("TaskReviewedBy", fields: [reviewedById], references: [id])
+
+  progressReports ProgressReport[] @relation("TaskProgressReports")
+  comments        Comment[]
+  attachments     Attachment[]
+  tags            TaskTag[]
+
+  dependsOn  TaskDependency[] @relation("DependentTask")
+  requiredBy TaskDependency[] @relation("PrerequisiteTask")
+
+  @@index([projectId])
+  @@index([assignedToId])
+  @@index([createdById])
+  @@index([reviewedById])
+  // ⬅ THÊM MỚI: phục vụ query "task sắp đến hạn" (dùng cho NotificationType.TASK_DUE_SOON)
+  @@index([dueDate])
+  // ⬅ THÊM MỚI: phục vụ dashboard lọc theo project + trạng thái duyệt
+  @@index([projectId, approvalStatus])
+  @@map("tasks")
+}
+
+model TaskDependency {
+  id              Int @id @default(autoincrement())
+  taskId          Int
+  dependsOnTaskId Int
+
+  task          Task @relation("DependentTask", fields: [taskId], references: [id], onDelete: Cascade)
+  dependsOnTask Task @relation("PrerequisiteTask", fields: [dependsOnTaskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, dependsOnTaskId])
+  @@map("task_dependencies")
+}
+
+// =====================================================================
+// TAGS / NHAN
+// =====================================================================
+
+model Tag {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  color String?
+
+  tasks TaskTag[]
+
+  @@map("tags")
+}
+
+model TaskTag {
+  taskId Int
+  tagId  Int
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, tagId])
+  @@map("task_tags")
+}
+
+// =====================================================================
+// PROGRESS REPORT (bao cao tien do)
+// =====================================================================
+
+model ProgressReport {
+  id           Int            @id @default(autoincrement())
+  taskId       Int
+  reportedById Int
+  status       ProgressStatus
+  percent      Int?
+  note         String?        @db.Text
+  createdAt    DateTime       @default(now())
+
+  task       Task @relation("TaskProgressReports", fields: [taskId], references: [id], onDelete: Cascade)
+  reportedBy User @relation("UserProgressReports", fields: [reportedById], references: [id])
+
+  @@index([taskId])
+  @@index([reportedById])
+  @@map("progress_reports")
+}
+
+// =====================================================================
+// COMMENTS (trao doi trong task)
+// =====================================================================
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  taskId    Int
+  authorId  Int
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([taskId])
+  @@index([authorId])
+  @@map("comments")
+}
+
+// =====================================================================
+// ATTACHMENTS (file dinh kem)
+// =====================================================================
+
+model Attachment {
+  id           Int      @id @default(autoincrement())
+  taskId       Int
+  uploadedById Int
+  fileName     String
+  fileUrl      String
+  fileSize     Int?
+  mimeType     String?
+  createdAt    DateTime @default(now())
+
+  task       Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  @@index([taskId])
+  @@index([uploadedById])
+  @@map("attachments")
+}
+
+// =====================================================================
+// NOTIFICATIONS (thong bao)
+// =====================================================================
+
+model Notification {
+  id                Int              @id @default(autoincrement())
+  userId            Int
+  type              NotificationType
+  title             String
+  message           String?          @db.Text
+  // ⬅ THÊM MỚI: để client biết click vào thì điều hướng tới resource nào
+  relatedEntityType String?
+  relatedEntityId   Int?
+  isRead            Boolean          @default(false)
+  createdAt         DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notifications")
+}
+
+// =====================================================================
+// AUDIT LOG (nhat ky thay doi - phuc vu truy vet)
+// =====================================================================
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int?
+  action     String
+  entityType String
+  entityId   Int
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
+
+// =====================================================================
+// ENUMS
+// =====================================================================
+
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  STUCK
+  DONE
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationType {
+  TASK_ASSIGNED
+  TASK_APPROVED
+  TASK_REJECTED
+  TASK_DUE_SOON
+  COMMENT_ADDED
+  GENERAL
+}

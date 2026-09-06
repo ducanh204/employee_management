@@ -1,0 +1,2390 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"_36_Enums.Role": {
+				"type": "string",
+				"enum": [
+					"ADMIN",
+					"MANAGER",
+					"EMPLOYEE"
+				]
+			},
+			"_36_Enums.ProgressStatus": {
+				"type": "string",
+				"enum": [
+					"NOT_STARTED",
+					"IN_PROGRESS",
+					"STUCK",
+					"DONE"
+				]
+			},
+			"_36_Enums.Difficulty": {
+				"type": "string",
+				"enum": [
+					"EASY",
+					"MEDIUM",
+					"HARD"
+				]
+			},
+			"_36_Enums.Priority": {
+				"type": "string",
+				"enum": [
+					"MEDIUM",
+					"LOW",
+					"HIGH",
+					"URGENT"
+				]
+			},
+			"_36_Enums.ApprovalStatus": {
+				"type": "string",
+				"enum": [
+					"PENDING",
+					"APPROVED",
+					"REJECTED"
+				]
+			},
+			"CreateTaskBody": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"difficulty": {
+						"type": "string"
+					},
+					"priority": {
+						"type": "string"
+					},
+					"effort": {
+						"type": "number",
+						"format": "double"
+					},
+					"projectId": {
+						"type": "number",
+						"format": "double"
+					},
+					"assignedToId": {
+						"type": "number",
+						"format": "double"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"dueDate": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"title",
+					"effort"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateTaskBody": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"difficulty": {
+						"type": "string"
+					},
+					"priority": {
+						"type": "string"
+					},
+					"effort": {
+						"type": "number",
+						"format": "double"
+					},
+					"projectId": {
+						"type": "number",
+						"format": "double"
+					},
+					"assignedToId": {
+						"type": "number",
+						"format": "double"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"dueDate": {
+						"type": "string"
+					},
+					"progressStatus": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"_36_Enums.ProjectStatus": {
+				"type": "string",
+				"enum": [
+					"PLANNING",
+					"ACTIVE",
+					"ON_HOLD",
+					"COMPLETED",
+					"CANCELLED"
+				]
+			},
+			"CreateProjectBody": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"departmentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"managerId": {
+						"type": "number",
+						"format": "double"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"endDate": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateProjectBody": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"departmentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"managerId": {
+						"type": "number",
+						"format": "double"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"endDate": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AddMemberBody": {
+				"properties": {
+					"userId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"userId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegisterBody": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password",
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginBody": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RefreshBody": {
+				"properties": {
+					"refreshToken": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"refreshToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"jwt": {
+				"type": "apiKey",
+				"name": "Authorization",
+				"in": "header"
+			}
+		}
+	},
+	"info": {
+		"title": "slave-management",
+		"version": "1.0.0",
+		"contact": {}
+	},
+	"paths": {
+		"/users": {
+			"get": {
+				"operationId": "List",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"pagination": {
+											"properties": {
+												"totalPages": {
+													"type": "number",
+													"format": "double"
+												},
+												"total": {
+													"type": "number",
+													"format": "double"
+												},
+												"limit": {
+													"type": "number",
+													"format": "double"
+												},
+												"page": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"totalPages",
+												"total",
+												"limit",
+												"page"
+											],
+											"type": "object"
+										},
+										"data": {
+											"items": {
+												"properties": {
+													"createdAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"isActive": {
+														"type": "boolean"
+													},
+													"role": {
+														"$ref": "#/components/schemas/_36_Enums.Role"
+													},
+													"avatarUrl": {
+														"type": "string"
+													},
+													"name": {
+														"type": "string"
+													},
+													"email": {
+														"type": "string"
+													},
+													"id": {
+														"type": "number",
+														"format": "double"
+													},
+													"department": {
+														"properties": {
+															"name": {
+																"type": "string"
+															},
+															"id": {
+																"type": "number",
+																"format": "double"
+															}
+														},
+														"required": [
+															"name",
+															"id"
+														],
+														"type": "object"
+													}
+												},
+												"required": [
+													"createdAt",
+													"isActive",
+													"role",
+													"avatarUrl",
+													"name",
+													"email",
+													"id",
+													"department"
+												],
+												"type": "object"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"pagination",
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "departmentId",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/users/workload-report": {
+			"get": {
+				"operationId": "WorkloadReport",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"items": {
+												"properties": {
+													"departmentName": {
+														"type": "string"
+													},
+													"userName": {
+														"type": "string"
+													},
+													"userId": {
+														"type": "number",
+														"format": "double"
+													},
+													"activeTaskCount": {
+														"type": "number",
+														"format": "double"
+													}
+												},
+												"required": [
+													"departmentName",
+													"userName",
+													"userId",
+													"activeTaskCount"
+												],
+												"type": "object"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": [
+							"ADMIN",
+							"MANAGER"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/users/{id}": {
+			"get": {
+				"operationId": "GetById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"createdAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"isActive": {
+													"type": "boolean"
+												},
+												"role": {
+													"$ref": "#/components/schemas/_36_Enums.Role"
+												},
+												"avatarUrl": {
+													"type": "string"
+												},
+												"name": {
+													"type": "string"
+												},
+												"email": {
+													"type": "string"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												},
+												"department": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												}
+											},
+											"required": [
+												"createdAt",
+												"isActive",
+												"role",
+												"avatarUrl",
+												"name",
+												"email",
+												"id",
+												"department"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/tasks": {
+			"get": {
+				"operationId": "List",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"pagination": {
+											"properties": {
+												"totalPages": {
+													"type": "number",
+													"format": "double"
+												},
+												"total": {
+													"type": "number",
+													"format": "double"
+												},
+												"limit": {
+													"type": "number",
+													"format": "double"
+												},
+												"page": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"totalPages",
+												"total",
+												"limit",
+												"page"
+											],
+											"type": "object"
+										},
+										"data": {
+											"items": {
+												"properties": {
+													"assignedTo": {
+														"properties": {
+															"name": {
+																"type": "string"
+															},
+															"id": {
+																"type": "number",
+																"format": "double"
+															}
+														},
+														"required": [
+															"name",
+															"id"
+														],
+														"type": "object"
+													},
+													"createdBy": {
+														"properties": {
+															"name": {
+																"type": "string"
+															},
+															"id": {
+																"type": "number",
+																"format": "double"
+															}
+														},
+														"required": [
+															"name",
+															"id"
+														],
+														"type": "object"
+													},
+													"completedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"dueDate": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"startDate": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"approvalStatus": {
+														"$ref": "#/components/schemas/_36_Enums.ApprovalStatus"
+													},
+													"effort": {
+														"type": "number",
+														"format": "double"
+													},
+													"priority": {
+														"$ref": "#/components/schemas/_36_Enums.Priority"
+													},
+													"difficulty": {
+														"$ref": "#/components/schemas/_36_Enums.Difficulty"
+													},
+													"title": {
+														"type": "string"
+													},
+													"progressStatus": {
+														"$ref": "#/components/schemas/_36_Enums.ProgressStatus"
+													},
+													"description": {
+														"type": "string"
+													},
+													"createdAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"id": {
+														"type": "number",
+														"format": "double"
+													},
+													"project": {
+														"properties": {
+															"name": {
+																"type": "string"
+															},
+															"id": {
+																"type": "number",
+																"format": "double"
+															}
+														},
+														"required": [
+															"name",
+															"id"
+														],
+														"type": "object"
+													}
+												},
+												"required": [
+													"assignedTo",
+													"createdBy",
+													"completedAt",
+													"dueDate",
+													"startDate",
+													"approvalStatus",
+													"effort",
+													"priority",
+													"difficulty",
+													"title",
+													"progressStatus",
+													"description",
+													"createdAt",
+													"id",
+													"project"
+												],
+												"type": "object"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"pagination",
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tasks"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "projectId",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "assignedToId",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "progressStatus",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"assignedTo": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												},
+												"createdBy": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												},
+												"completedAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"dueDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"startDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"approvalStatus": {
+													"$ref": "#/components/schemas/_36_Enums.ApprovalStatus"
+												},
+												"effort": {
+													"type": "number",
+													"format": "double"
+												},
+												"priority": {
+													"$ref": "#/components/schemas/_36_Enums.Priority"
+												},
+												"difficulty": {
+													"$ref": "#/components/schemas/_36_Enums.Difficulty"
+												},
+												"title": {
+													"type": "string"
+												},
+												"progressStatus": {
+													"$ref": "#/components/schemas/_36_Enums.ProgressStatus"
+												},
+												"description": {
+													"type": "string"
+												},
+												"createdAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												},
+												"project": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												}
+											},
+											"required": [
+												"assignedTo",
+												"createdBy",
+												"completedAt",
+												"dueDate",
+												"startDate",
+												"approvalStatus",
+												"effort",
+												"priority",
+												"difficulty",
+												"title",
+												"progressStatus",
+												"description",
+												"createdAt",
+												"id",
+												"project"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tasks"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateTaskBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/tasks/{id}": {
+			"get": {
+				"operationId": "GetById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"assignedTo": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												},
+												"createdBy": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												},
+												"completedAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"dueDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"startDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"approvalStatus": {
+													"$ref": "#/components/schemas/_36_Enums.ApprovalStatus"
+												},
+												"effort": {
+													"type": "number",
+													"format": "double"
+												},
+												"priority": {
+													"$ref": "#/components/schemas/_36_Enums.Priority"
+												},
+												"difficulty": {
+													"$ref": "#/components/schemas/_36_Enums.Difficulty"
+												},
+												"title": {
+													"type": "string"
+												},
+												"progressStatus": {
+													"$ref": "#/components/schemas/_36_Enums.ProgressStatus"
+												},
+												"description": {
+													"type": "string"
+												},
+												"createdAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												},
+												"project": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												}
+											},
+											"required": [
+												"assignedTo",
+												"createdBy",
+												"completedAt",
+												"dueDate",
+												"startDate",
+												"approvalStatus",
+												"effort",
+												"priority",
+												"difficulty",
+												"title",
+												"progressStatus",
+												"description",
+												"createdAt",
+												"id",
+												"project"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tasks"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"assignedTo": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												},
+												"createdBy": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												},
+												"completedAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"dueDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"startDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"approvalStatus": {
+													"$ref": "#/components/schemas/_36_Enums.ApprovalStatus"
+												},
+												"effort": {
+													"type": "number",
+													"format": "double"
+												},
+												"priority": {
+													"$ref": "#/components/schemas/_36_Enums.Priority"
+												},
+												"difficulty": {
+													"$ref": "#/components/schemas/_36_Enums.Difficulty"
+												},
+												"title": {
+													"type": "string"
+												},
+												"progressStatus": {
+													"$ref": "#/components/schemas/_36_Enums.ProgressStatus"
+												},
+												"description": {
+													"type": "string"
+												},
+												"createdAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												},
+												"project": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												}
+											},
+											"required": [
+												"assignedTo",
+												"createdBy",
+												"completedAt",
+												"dueDate",
+												"startDate",
+												"approvalStatus",
+												"effort",
+												"priority",
+												"difficulty",
+												"title",
+												"progressStatus",
+												"description",
+												"createdAt",
+												"id",
+												"project"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tasks"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateTaskBody"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "Remove",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Tasks"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/projects": {
+			"get": {
+				"operationId": "List",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"pagination": {
+											"properties": {
+												"totalPages": {
+													"type": "number",
+													"format": "double"
+												},
+												"total": {
+													"type": "number",
+													"format": "double"
+												},
+												"limit": {
+													"type": "number",
+													"format": "double"
+												},
+												"page": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"totalPages",
+												"total",
+												"limit",
+												"page"
+											],
+											"type": "object"
+										},
+										"data": {
+											"items": {
+												"properties": {
+													"manager": {
+														"properties": {
+															"name": {
+																"type": "string"
+															},
+															"email": {
+																"type": "string"
+															},
+															"id": {
+																"type": "number",
+																"format": "double"
+															}
+														},
+														"required": [
+															"name",
+															"email",
+															"id"
+														],
+														"type": "object"
+													},
+													"endDate": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"startDate": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"description": {
+														"type": "string"
+													},
+													"status": {
+														"$ref": "#/components/schemas/_36_Enums.ProjectStatus"
+													},
+													"_count": {
+														"properties": {
+															"tasks": {
+																"type": "number",
+																"format": "double"
+															},
+															"members": {
+																"type": "number",
+																"format": "double"
+															}
+														},
+														"required": [
+															"tasks",
+															"members"
+														],
+														"type": "object"
+													},
+													"createdAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"name": {
+														"type": "string"
+													},
+													"id": {
+														"type": "number",
+														"format": "double"
+													},
+													"department": {
+														"properties": {
+															"name": {
+																"type": "string"
+															},
+															"id": {
+																"type": "number",
+																"format": "double"
+															}
+														},
+														"required": [
+															"name",
+															"id"
+														],
+														"type": "object"
+													}
+												},
+												"required": [
+													"manager",
+													"endDate",
+													"startDate",
+													"description",
+													"status",
+													"_count",
+													"createdAt",
+													"name",
+													"id",
+													"department"
+												],
+												"type": "object"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"pagination",
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Projects"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "departmentId",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "status",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"manager": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"email": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"email",
+														"id"
+													],
+													"type": "object"
+												},
+												"endDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"startDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"description": {
+													"type": "string"
+												},
+												"status": {
+													"$ref": "#/components/schemas/_36_Enums.ProjectStatus"
+												},
+												"_count": {
+													"properties": {
+														"tasks": {
+															"type": "number",
+															"format": "double"
+														},
+														"members": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"tasks",
+														"members"
+													],
+													"type": "object"
+												},
+												"createdAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"name": {
+													"type": "string"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												},
+												"department": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												}
+											},
+											"required": [
+												"manager",
+												"endDate",
+												"startDate",
+												"description",
+												"status",
+												"_count",
+												"createdAt",
+												"name",
+												"id",
+												"department"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Projects"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateProjectBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/projects/{id}": {
+			"get": {
+				"operationId": "GetById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"members": {
+													"items": {
+														"properties": {
+															"joinedAt": {
+																"type": "string",
+																"format": "date-time"
+															},
+															"user": {
+																"properties": {
+																	"name": {
+																		"type": "string"
+																	},
+																	"email": {
+																		"type": "string"
+																	},
+																	"id": {
+																		"type": "number",
+																		"format": "double"
+																	}
+																},
+																"required": [
+																	"name",
+																	"email",
+																	"id"
+																],
+																"type": "object"
+															}
+														},
+														"required": [
+															"joinedAt",
+															"user"
+														],
+														"type": "object"
+													},
+													"type": "array"
+												},
+												"manager": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"email": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"email",
+														"id"
+													],
+													"type": "object"
+												},
+												"endDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"startDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"description": {
+													"type": "string"
+												},
+												"status": {
+													"$ref": "#/components/schemas/_36_Enums.ProjectStatus"
+												},
+												"_count": {
+													"properties": {
+														"tasks": {
+															"type": "number",
+															"format": "double"
+														},
+														"members": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"tasks",
+														"members"
+													],
+													"type": "object"
+												},
+												"createdAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"name": {
+													"type": "string"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												},
+												"department": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												}
+											},
+											"required": [
+												"members",
+												"manager",
+												"endDate",
+												"startDate",
+												"description",
+												"status",
+												"_count",
+												"createdAt",
+												"name",
+												"id",
+												"department"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Projects"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"manager": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"email": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"email",
+														"id"
+													],
+													"type": "object"
+												},
+												"endDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"startDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"description": {
+													"type": "string"
+												},
+												"status": {
+													"$ref": "#/components/schemas/_36_Enums.ProjectStatus"
+												},
+												"_count": {
+													"properties": {
+														"tasks": {
+															"type": "number",
+															"format": "double"
+														},
+														"members": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"tasks",
+														"members"
+													],
+													"type": "object"
+												},
+												"createdAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"name": {
+													"type": "string"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												},
+												"department": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												}
+											},
+											"required": [
+												"manager",
+												"endDate",
+												"startDate",
+												"description",
+												"status",
+												"_count",
+												"createdAt",
+												"name",
+												"id",
+												"department"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Projects"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateProjectBody"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "Remove",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Projects"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/projects/{id}/members": {
+			"post": {
+				"operationId": "AddMember",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"joinedAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												},
+												"user": {
+													"properties": {
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"name",
+														"id"
+													],
+													"type": "object"
+												}
+											},
+											"required": [
+												"joinedAt",
+												"id",
+												"user"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Projects"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AddMemberBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/projects/{id}/members/{userId}": {
+			"delete": {
+				"operationId": "RemoveMember",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Projects"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/auth/register": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"role": {
+													"type": "string"
+												},
+												"name": {
+													"type": "string"
+												},
+												"email": {
+													"type": "string"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"role",
+												"name",
+												"email",
+												"id"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"user": {
+													"properties": {
+														"role": {
+															"type": "string"
+														},
+														"name": {
+															"type": "string"
+														},
+														"email": {
+															"type": "string"
+														},
+														"id": {
+															"type": "number",
+															"format": "double"
+														}
+													},
+													"required": [
+														"role",
+														"name",
+														"email",
+														"id"
+													],
+													"type": "object"
+												},
+												"refreshToken": {
+													"type": "string"
+												},
+												"accessToken": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"user",
+												"refreshToken",
+												"accessToken"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/refresh": {
+			"post": {
+				"operationId": "Refresh",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"refreshToken": {
+													"type": "string"
+												},
+												"accessToken": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"refreshToken",
+												"accessToken"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RefreshBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RefreshBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/logout-all": {
+			"post": {
+				"operationId": "LogoutAll",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
