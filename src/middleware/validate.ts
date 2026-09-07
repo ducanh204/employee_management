@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodTypeAny } from "zod";
-import { BadRequestError } from "../errors/app-error";
+import { BadRequestError } from "@/errors/app-error";
 
 type Source = "body" | "query" | "params";
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ProjectStatus } from "../generated";
+import { ProjectStatus } from "@/generated/client";
 
 export const createProjectSchema = z.object({
   name: z.string().trim().min(1, "Project name is required").max(255),

@@ -13,8 +13,8 @@ import {
   Tags,
 } from "tsoa";
 
-import * as projectService from "../services/project.service";
-import { parseAuthHeader } from "../middleware/authenticate";
+import * as projectService from "@/services/project.service";
+import { parseAuthHeader } from "@/middleware/authenticate";
 
 import {
   createProjectSchema,

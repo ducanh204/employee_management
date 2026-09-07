@@ -7,47 +7,30 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"_36_Enums.Role": {
-				"type": "string",
-				"enum": [
-					"ADMIN",
-					"MANAGER",
-					"EMPLOYEE"
-				]
-			},
-			"_36_Enums.ProgressStatus": {
-				"type": "string",
-				"enum": [
-					"NOT_STARTED",
-					"IN_PROGRESS",
-					"STUCK",
-					"DONE"
-				]
-			},
-			"_36_Enums.Difficulty": {
-				"type": "string",
-				"enum": [
-					"EASY",
-					"MEDIUM",
-					"HARD"
-				]
-			},
-			"_36_Enums.Priority": {
-				"type": "string",
-				"enum": [
-					"MEDIUM",
-					"LOW",
-					"HIGH",
-					"URGENT"
-				]
-			},
-			"_36_Enums.ApprovalStatus": {
-				"type": "string",
-				"enum": [
-					"PENDING",
-					"APPROVED",
-					"REJECTED"
-				]
+			"UpdateUserBody": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"avatarUrl": {
+						"type": "string"
+					},
+					"departmentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
 			},
 			"CreateTaskBody": {
 				"properties": {
@@ -127,16 +110,6 @@
 				},
 				"type": "object",
 				"additionalProperties": false
-			},
-			"_36_Enums.ProjectStatus": {
-				"type": "string",
-				"enum": [
-					"PLANNING",
-					"ACTIVE",
-					"ON_HOLD",
-					"COMPLETED",
-					"CANCELLED"
-				]
 			},
 			"CreateProjectBody": {
 				"properties": {
@@ -275,9 +248,9 @@
 		"contact": {}
 	},
 	"paths": {
-		"/users": {
+		"/users/me": {
 			"get": {
-				"operationId": "List",
+				"operationId": "GetMe",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -285,93 +258,9 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"pagination": {
-											"properties": {
-												"totalPages": {
-													"type": "number",
-													"format": "double"
-												},
-												"total": {
-													"type": "number",
-													"format": "double"
-												},
-												"limit": {
-													"type": "number",
-													"format": "double"
-												},
-												"page": {
-													"type": "number",
-													"format": "double"
-												}
-											},
-											"required": [
-												"totalPages",
-												"total",
-												"limit",
-												"page"
-											],
-											"type": "object"
-										},
-										"data": {
-											"items": {
-												"properties": {
-													"createdAt": {
-														"type": "string",
-														"format": "date-time"
-													},
-													"isActive": {
-														"type": "boolean"
-													},
-													"role": {
-														"$ref": "#/components/schemas/_36_Enums.Role"
-													},
-													"avatarUrl": {
-														"type": "string"
-													},
-													"name": {
-														"type": "string"
-													},
-													"email": {
-														"type": "string"
-													},
-													"id": {
-														"type": "number",
-														"format": "double"
-													},
-													"department": {
-														"properties": {
-															"name": {
-																"type": "string"
-															},
-															"id": {
-																"type": "number",
-																"format": "double"
-															}
-														},
-														"required": [
-															"name",
-															"id"
-														],
-														"type": "object"
-													}
-												},
-												"required": [
-													"createdAt",
-													"isActive",
-													"role",
-													"avatarUrl",
-													"name",
-													"email",
-													"id",
-													"department"
-												],
-												"type": "object"
-											},
-											"type": "array"
-										}
+										"data": {}
 									},
 									"required": [
-										"pagination",
 										"data"
 									],
 									"type": "object"
@@ -389,6 +278,47 @@
 					}
 				],
 				"parameters": [
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users": {
+			"get": {
+				"operationId": "List",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
 					{
 						"in": "query",
 						"name": "page",
@@ -419,68 +349,6 @@
 				]
 			}
 		},
-		"/users/workload-report": {
-			"get": {
-				"operationId": "WorkloadReport",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"data": {
-											"items": {
-												"properties": {
-													"departmentName": {
-														"type": "string"
-													},
-													"userName": {
-														"type": "string"
-													},
-													"userId": {
-														"type": "number",
-														"format": "double"
-													},
-													"activeTaskCount": {
-														"type": "number",
-														"format": "double"
-													}
-												},
-												"required": [
-													"departmentName",
-													"userName",
-													"userId",
-													"activeTaskCount"
-												],
-												"type": "object"
-											},
-											"type": "array"
-										}
-									},
-									"required": [
-										"data"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [
-					{
-						"jwt": [
-							"ADMIN",
-							"MANAGER"
-						]
-					}
-				],
-				"parameters": []
-			}
-		},
 		"/users/{id}": {
 			"get": {
 				"operationId": "GetById",
@@ -491,60 +359,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"createdAt": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"isActive": {
-													"type": "boolean"
-												},
-												"role": {
-													"$ref": "#/components/schemas/_36_Enums.Role"
-												},
-												"avatarUrl": {
-													"type": "string"
-												},
-												"name": {
-													"type": "string"
-												},
-												"email": {
-													"type": "string"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												},
-												"department": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												}
-											},
-											"required": [
-												"createdAt",
-												"isActive",
-												"role",
-												"avatarUrl",
-												"name",
-												"email",
-												"id",
-												"department"
-											],
-											"type": "object"
-										}
+										"data": {}
 									},
 									"required": [
 										"data"
@@ -572,6 +387,107 @@
 							"format": "double",
 							"type": "number"
 						}
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"patch": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateUserBody"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "Remove",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			}
@@ -584,157 +500,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"properties": {
-										"pagination": {
-											"properties": {
-												"totalPages": {
-													"type": "number",
-													"format": "double"
-												},
-												"total": {
-													"type": "number",
-													"format": "double"
-												},
-												"limit": {
-													"type": "number",
-													"format": "double"
-												},
-												"page": {
-													"type": "number",
-													"format": "double"
-												}
-											},
-											"required": [
-												"totalPages",
-												"total",
-												"limit",
-												"page"
-											],
-											"type": "object"
-										},
-										"data": {
-											"items": {
-												"properties": {
-													"assignedTo": {
-														"properties": {
-															"name": {
-																"type": "string"
-															},
-															"id": {
-																"type": "number",
-																"format": "double"
-															}
-														},
-														"required": [
-															"name",
-															"id"
-														],
-														"type": "object"
-													},
-													"createdBy": {
-														"properties": {
-															"name": {
-																"type": "string"
-															},
-															"id": {
-																"type": "number",
-																"format": "double"
-															}
-														},
-														"required": [
-															"name",
-															"id"
-														],
-														"type": "object"
-													},
-													"completedAt": {
-														"type": "string",
-														"format": "date-time"
-													},
-													"dueDate": {
-														"type": "string",
-														"format": "date-time"
-													},
-													"startDate": {
-														"type": "string",
-														"format": "date-time"
-													},
-													"approvalStatus": {
-														"$ref": "#/components/schemas/_36_Enums.ApprovalStatus"
-													},
-													"effort": {
-														"type": "number",
-														"format": "double"
-													},
-													"priority": {
-														"$ref": "#/components/schemas/_36_Enums.Priority"
-													},
-													"difficulty": {
-														"$ref": "#/components/schemas/_36_Enums.Difficulty"
-													},
-													"title": {
-														"type": "string"
-													},
-													"progressStatus": {
-														"$ref": "#/components/schemas/_36_Enums.ProgressStatus"
-													},
-													"description": {
-														"type": "string"
-													},
-													"createdAt": {
-														"type": "string",
-														"format": "date-time"
-													},
-													"id": {
-														"type": "number",
-														"format": "double"
-													},
-													"project": {
-														"properties": {
-															"name": {
-																"type": "string"
-															},
-															"id": {
-																"type": "number",
-																"format": "double"
-															}
-														},
-														"required": [
-															"name",
-															"id"
-														],
-														"type": "object"
-													}
-												},
-												"required": [
-													"assignedTo",
-													"createdBy",
-													"completedAt",
-													"dueDate",
-													"startDate",
-													"approvalStatus",
-													"effort",
-													"priority",
-													"difficulty",
-													"title",
-													"progressStatus",
-													"description",
-													"createdAt",
-													"id",
-													"project"
-												],
-												"type": "object"
-											},
-											"type": "array"
-										}
-									},
-									"required": [
-										"pagination",
-										"data"
-									],
-									"type": "object"
-								}
+								"schema": {}
 							}
 						}
 					}
@@ -803,118 +569,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"assignedTo": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												},
-												"createdBy": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												},
-												"completedAt": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"dueDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"startDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"approvalStatus": {
-													"$ref": "#/components/schemas/_36_Enums.ApprovalStatus"
-												},
-												"effort": {
-													"type": "number",
-													"format": "double"
-												},
-												"priority": {
-													"$ref": "#/components/schemas/_36_Enums.Priority"
-												},
-												"difficulty": {
-													"$ref": "#/components/schemas/_36_Enums.Difficulty"
-												},
-												"title": {
-													"type": "string"
-												},
-												"progressStatus": {
-													"$ref": "#/components/schemas/_36_Enums.ProgressStatus"
-												},
-												"description": {
-													"type": "string"
-												},
-												"createdAt": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												},
-												"project": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												}
-											},
-											"required": [
-												"assignedTo",
-												"createdBy",
-												"completedAt",
-												"dueDate",
-												"startDate",
-												"approvalStatus",
-												"effort",
-												"priority",
-												"difficulty",
-												"title",
-												"progressStatus",
-												"description",
-												"createdAt",
-												"id",
-												"project"
-											],
-											"type": "object"
-										}
+										"data": {}
 									},
 									"required": [
 										"data"
@@ -965,118 +620,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"assignedTo": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												},
-												"createdBy": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												},
-												"completedAt": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"dueDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"startDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"approvalStatus": {
-													"$ref": "#/components/schemas/_36_Enums.ApprovalStatus"
-												},
-												"effort": {
-													"type": "number",
-													"format": "double"
-												},
-												"priority": {
-													"$ref": "#/components/schemas/_36_Enums.Priority"
-												},
-												"difficulty": {
-													"$ref": "#/components/schemas/_36_Enums.Difficulty"
-												},
-												"title": {
-													"type": "string"
-												},
-												"progressStatus": {
-													"$ref": "#/components/schemas/_36_Enums.ProgressStatus"
-												},
-												"description": {
-													"type": "string"
-												},
-												"createdAt": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												},
-												"project": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												}
-											},
-											"required": [
-												"assignedTo",
-												"createdBy",
-												"completedAt",
-												"dueDate",
-												"startDate",
-												"approvalStatus",
-												"effort",
-												"priority",
-												"difficulty",
-												"title",
-												"progressStatus",
-												"description",
-												"createdAt",
-												"id",
-												"project"
-											],
-											"type": "object"
-										}
+										"data": {}
 									},
 									"required": [
 										"data"
@@ -1116,118 +660,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"assignedTo": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												},
-												"createdBy": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												},
-												"completedAt": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"dueDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"startDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"approvalStatus": {
-													"$ref": "#/components/schemas/_36_Enums.ApprovalStatus"
-												},
-												"effort": {
-													"type": "number",
-													"format": "double"
-												},
-												"priority": {
-													"$ref": "#/components/schemas/_36_Enums.Priority"
-												},
-												"difficulty": {
-													"$ref": "#/components/schemas/_36_Enums.Difficulty"
-												},
-												"title": {
-													"type": "string"
-												},
-												"progressStatus": {
-													"$ref": "#/components/schemas/_36_Enums.ProgressStatus"
-												},
-												"description": {
-													"type": "string"
-												},
-												"createdAt": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												},
-												"project": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												}
-											},
-											"required": [
-												"assignedTo",
-												"createdBy",
-												"completedAt",
-												"dueDate",
-												"startDate",
-												"approvalStatus",
-												"effort",
-												"priority",
-												"difficulty",
-												"title",
-												"progressStatus",
-												"description",
-												"createdAt",
-												"id",
-												"project"
-											],
-											"type": "object"
-										}
+										"data": {}
 									},
 									"required": [
 										"data"
@@ -1320,140 +753,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"properties": {
-										"pagination": {
-											"properties": {
-												"totalPages": {
-													"type": "number",
-													"format": "double"
-												},
-												"total": {
-													"type": "number",
-													"format": "double"
-												},
-												"limit": {
-													"type": "number",
-													"format": "double"
-												},
-												"page": {
-													"type": "number",
-													"format": "double"
-												}
-											},
-											"required": [
-												"totalPages",
-												"total",
-												"limit",
-												"page"
-											],
-											"type": "object"
-										},
-										"data": {
-											"items": {
-												"properties": {
-													"manager": {
-														"properties": {
-															"name": {
-																"type": "string"
-															},
-															"email": {
-																"type": "string"
-															},
-															"id": {
-																"type": "number",
-																"format": "double"
-															}
-														},
-														"required": [
-															"name",
-															"email",
-															"id"
-														],
-														"type": "object"
-													},
-													"endDate": {
-														"type": "string",
-														"format": "date-time"
-													},
-													"startDate": {
-														"type": "string",
-														"format": "date-time"
-													},
-													"description": {
-														"type": "string"
-													},
-													"status": {
-														"$ref": "#/components/schemas/_36_Enums.ProjectStatus"
-													},
-													"_count": {
-														"properties": {
-															"tasks": {
-																"type": "number",
-																"format": "double"
-															},
-															"members": {
-																"type": "number",
-																"format": "double"
-															}
-														},
-														"required": [
-															"tasks",
-															"members"
-														],
-														"type": "object"
-													},
-													"createdAt": {
-														"type": "string",
-														"format": "date-time"
-													},
-													"name": {
-														"type": "string"
-													},
-													"id": {
-														"type": "number",
-														"format": "double"
-													},
-													"department": {
-														"properties": {
-															"name": {
-																"type": "string"
-															},
-															"id": {
-																"type": "number",
-																"format": "double"
-															}
-														},
-														"required": [
-															"name",
-															"id"
-														],
-														"type": "object"
-													}
-												},
-												"required": [
-													"manager",
-													"endDate",
-													"startDate",
-													"description",
-													"status",
-													"_count",
-													"createdAt",
-													"name",
-													"id",
-													"department"
-												],
-												"type": "object"
-											},
-											"type": "array"
-										}
-									},
-									"required": [
-										"pagination",
-										"data"
-									],
-									"type": "object"
-								}
+								"schema": {}
 							}
 						}
 					}
@@ -1513,101 +813,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"manager": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"email": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"email",
-														"id"
-													],
-													"type": "object"
-												},
-												"endDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"startDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"description": {
-													"type": "string"
-												},
-												"status": {
-													"$ref": "#/components/schemas/_36_Enums.ProjectStatus"
-												},
-												"_count": {
-													"properties": {
-														"tasks": {
-															"type": "number",
-															"format": "double"
-														},
-														"members": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"tasks",
-														"members"
-													],
-													"type": "object"
-												},
-												"createdAt": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"name": {
-													"type": "string"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												},
-												"department": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												}
-											},
-											"required": [
-												"manager",
-												"endDate",
-												"startDate",
-												"description",
-												"status",
-												"_count",
-												"createdAt",
-												"name",
-												"id",
-												"department"
-											],
-											"type": "object"
-										}
+										"data": {}
 									},
 									"required": [
 										"data"
@@ -1658,138 +864,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"members": {
-													"items": {
-														"properties": {
-															"joinedAt": {
-																"type": "string",
-																"format": "date-time"
-															},
-															"user": {
-																"properties": {
-																	"name": {
-																		"type": "string"
-																	},
-																	"email": {
-																		"type": "string"
-																	},
-																	"id": {
-																		"type": "number",
-																		"format": "double"
-																	}
-																},
-																"required": [
-																	"name",
-																	"email",
-																	"id"
-																],
-																"type": "object"
-															}
-														},
-														"required": [
-															"joinedAt",
-															"user"
-														],
-														"type": "object"
-													},
-													"type": "array"
-												},
-												"manager": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"email": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"email",
-														"id"
-													],
-													"type": "object"
-												},
-												"endDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"startDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"description": {
-													"type": "string"
-												},
-												"status": {
-													"$ref": "#/components/schemas/_36_Enums.ProjectStatus"
-												},
-												"_count": {
-													"properties": {
-														"tasks": {
-															"type": "number",
-															"format": "double"
-														},
-														"members": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"tasks",
-														"members"
-													],
-													"type": "object"
-												},
-												"createdAt": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"name": {
-													"type": "string"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												},
-												"department": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												}
-											},
-											"required": [
-												"members",
-												"manager",
-												"endDate",
-												"startDate",
-												"description",
-												"status",
-												"_count",
-												"createdAt",
-												"name",
-												"id",
-												"department"
-											],
-											"type": "object"
-										}
+										"data": {}
 									},
 									"required": [
 										"data"
@@ -1829,101 +904,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"manager": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"email": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"email",
-														"id"
-													],
-													"type": "object"
-												},
-												"endDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"startDate": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"description": {
-													"type": "string"
-												},
-												"status": {
-													"$ref": "#/components/schemas/_36_Enums.ProjectStatus"
-												},
-												"_count": {
-													"properties": {
-														"tasks": {
-															"type": "number",
-															"format": "double"
-														},
-														"members": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"tasks",
-														"members"
-													],
-													"type": "object"
-												},
-												"createdAt": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"name": {
-													"type": "string"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												},
-												"department": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												}
-											},
-											"required": [
-												"manager",
-												"endDate",
-												"startDate",
-												"description",
-												"status",
-												"_count",
-												"createdAt",
-												"name",
-												"id",
-												"department"
-											],
-											"type": "object"
-										}
+										"data": {}
 									},
 									"required": [
 										"data"
@@ -2018,40 +999,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"joinedAt": {
-													"type": "string",
-													"format": "date-time"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												},
-												"user": {
-													"properties": {
-														"name": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"name",
-														"id"
-													],
-													"type": "object"
-												}
-											},
-											"required": [
-												"joinedAt",
-												"id",
-												"user"
-											],
-											"type": "object"
-										}
+										"data": {}
 									},
 									"required": [
 										"data"
@@ -2157,30 +1105,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"role": {
-													"type": "string"
-												},
-												"name": {
-													"type": "string"
-												},
-												"email": {
-													"type": "string"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												}
-											},
-											"required": [
-												"role",
-												"name",
-												"email",
-												"id"
-											],
-											"type": "object"
-										}
+										"data": {}
 									},
 									"required": [
 										"data"
@@ -2218,46 +1143,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"user": {
-													"properties": {
-														"role": {
-															"type": "string"
-														},
-														"name": {
-															"type": "string"
-														},
-														"email": {
-															"type": "string"
-														},
-														"id": {
-															"type": "number",
-															"format": "double"
-														}
-													},
-													"required": [
-														"role",
-														"name",
-														"email",
-														"id"
-													],
-													"type": "object"
-												},
-												"refreshToken": {
-													"type": "string"
-												},
-												"accessToken": {
-													"type": "string"
-												}
-											},
-											"required": [
-												"user",
-												"refreshToken",
-												"accessToken"
-											],
-											"type": "object"
-										}
+										"data": {}
 									},
 									"required": [
 										"data"
@@ -2295,21 +1181,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"refreshToken": {
-													"type": "string"
-												},
-												"accessToken": {
-													"type": "string"
-												}
-											},
-											"required": [
-												"refreshToken",
-												"accessToken"
-											],
-											"type": "object"
-										}
+										"data": {}
 									},
 									"required": [
 										"data"

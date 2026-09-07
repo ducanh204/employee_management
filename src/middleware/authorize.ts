@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { Role } from "../generated";
-import { ForbiddenError, UnauthorizedError } from "../errors/app-error";
+import { Role } from "@/generated/client";
+import { ForbiddenError, UnauthorizedError } from "@/errors/app-error";
 
 /**
  * authorize(["ADMIN", "MANAGER"]) -> only allows these two roles to proceed.

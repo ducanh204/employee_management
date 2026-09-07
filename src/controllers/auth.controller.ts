@@ -9,7 +9,7 @@ import {
   RequestProp,
 } from "tsoa";
 
-import * as authService from "../services/auth.service";
+import * as authService from "@/services/auth.service";
 
 import {
   registerSchema,

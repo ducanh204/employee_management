@@ -1,10 +1,11 @@
 import jwt from "jsonwebtoken";
 import crypto from "node:crypto";
-import { env } from "../config/env";
-import { Role } from "../generated";
-import { UnauthorizedError } from "../errors/app-error";
+import { env } from "@/config/env";
+import { Role } from "@/generated/browser";
+import { UnauthorizedError } from "@/errors/app-error";
 
 export interface AccessTokenPayload {
+  departmentId: null;
   sub: number; // userId
   email: string;
   role: Role;

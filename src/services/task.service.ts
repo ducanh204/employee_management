@@ -5,7 +5,7 @@ import {
   BadRequestError,
 } from "../errors/app-error";
 import { AuthUser } from "../types/express";
-import { Role, ProgressStatus, Prisma } from "../generated";
+import { Role, ProgressStatus, Prisma } from "../generated/client";
 import { isProjectMember } from "./project.service";
 import {
   CreateTaskInput,

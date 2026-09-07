@@ -1,11 +1,11 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated"
+  provider     = "prisma-client" 
+  output       = "../src/generated"
+  moduleFormat = "cjs"            
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 // =====================================================================

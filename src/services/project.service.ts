@@ -1,11 +1,11 @@
-import { prisma } from "../lib/prisma";
+import { prisma } from "@/lib/prisma";
 import {
   NotFoundError,
   ForbiddenError,
   ConflictError,
 } from "../errors/app-error";
 import { AuthUser } from "../types/express";
-import { Role, Prisma } from "../generated";
+import { Role, Prisma } from "../generated/client";
 import {
   CreateProjectInput,
   UpdateProjectInput,

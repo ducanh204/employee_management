@@ -2,7 +2,7 @@ import { Request } from "express";
 import { extractAuthUser } from "./authenticate";
 import { ForbiddenError } from "../errors/app-error";
 import { AuthUser } from "../types/express";
-import { Role } from "../generated";
+import { Role } from "@/generated/client";
 
 /**
  * Tsoa calls this function for every endpoint that uses

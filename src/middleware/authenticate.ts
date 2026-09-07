@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { verifyAccessToken } from "../utils/token.util";
-import { UnauthorizedError } from "../errors/app-error";
-import { AuthUser } from "../types/express";
+import { verifyAccessToken } from "@/utils/token.util";
+import { UnauthorizedError } from "@/errors/app-error";
+import { AuthUser } from "@/types/express";
 
 /**
  * Kept separate from extractAuthUser(req) so it can be reused in places
@@ -25,6 +25,7 @@ export function parseAuthHeader(authHeader?: string): AuthUser {
     id: payload.sub,
     email: payload.email,
     role: payload.role,
+    departmentId: payload.departmentId ?? null,
   };
 }
 

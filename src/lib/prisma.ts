@@ -1,25 +1,12 @@
-import { PrismaClient } from "../generated";
+// src/lib/prisma.ts
+import "dotenv/config";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import { PrismaClient } from "@/generated/client";
 
-// Singleton: ensures the entire app uses only one PrismaClient instance.
-//
-// Important during development with hot-reload — each reload that creates a
-// new PrismaClient() instance will open an additional connection pool,
-// quickly exceeding the MySQL connection limit.
-
-declare global {
-  // eslint-disable-next-line no-var
-  var __prisma: PrismaClient | undefined;
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL environment variable not set");
 }
 
-export const prisma =
-  global.__prisma ??
-  new PrismaClient({
-    log:
-      process.env.NODE_ENV === "development"
-        ? ["warn", "error"]
-        : ["error"],
-  });
+const adapter = new PrismaMariaDb(process.env.DATABASE_URL);
 
-if (process.env.NODE_ENV !== "production") {
-  global.__prisma = prisma;
-}
+export const prisma = new PrismaClient({ adapter });

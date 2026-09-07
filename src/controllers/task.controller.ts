@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Header, Path, Post, Put, Query, Route, Security, Tags } from "tsoa";
-import * as taskService from "../services/task.service";
-import { parseAuthHeader } from "../middleware/authenticate";
-import { createTaskSchema, updateTaskSchema, listTasksQuerySchema } from "../validators/task.validator";
+import * as taskService from "@/services/task.service";
+import { parseAuthHeader } from "@/middleware/authenticate";
+import { createTaskSchema, updateTaskSchema, listTasksQuerySchema } from "@/validators/task.validator";
 
 interface CreateTaskBody {
   title: string;

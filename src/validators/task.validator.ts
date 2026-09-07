@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Difficulty, Priority, ProgressStatus } from "../generated";
+import { Difficulty, Priority, ProgressStatus } from "@/generated/client";
 
 export const createTaskSchema = z.object({
   title: z.string().trim().min(1, "Task title is required").max(255),

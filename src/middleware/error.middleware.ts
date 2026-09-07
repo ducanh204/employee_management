@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { ValidateError } from "tsoa";
 
-import { AppError } from "../errors/app-error";
-import { logger } from "../utils/logger";
+import { AppError } from "@/errors/app-error";
+import { logger } from "@/utils/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function errorMiddleware(

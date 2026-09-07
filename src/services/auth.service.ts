@@ -1,13 +1,13 @@
 import { prisma } from "../lib/prisma";
-import { hashPassword, comparePassword } from "../utils/password.util";
+import { hashPassword, comparePassword } from "@/utils/password.util";
 import {
   signAccessToken,
   generateRefreshTokenPlain,
   hashRefreshToken,
   getRefreshTokenExpiryDate,
 } from "../utils/token.util";
-import { ConflictError, UnauthorizedError } from "../errors/app-error";
-import { RegisterInput, LoginInput } from "../validators/auth.validator";
+import { ConflictError, UnauthorizedError } from "@/errors/app-error";
+import { RegisterInput, LoginInput } from "@/validators/auth.validator";
 import { logger } from "../utils/logger";
 
 // Data returned to the client — NEVER expose the password field
@@ -37,6 +37,7 @@ async function issueTokenPair(
     sub: user.id,
     email: user.email,
     role: user.role,
+    departmentId: null, // departmentId is not included in the access token payload for now
   });
 
   const refreshTokenPlain = generateRefreshTokenPlain();
@@ -191,6 +192,7 @@ export async function refreshAccessToken(refreshTokenPlain: string) {
     sub: user.id,
     email: user.email,
     role: user.role,
+    departmentId: null, // departmentId is not included in the access token payload for now
   });
 
   return {
