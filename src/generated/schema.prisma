@@ -55,21 +55,22 @@ model User {
   projectMembers  ProjectMember[]
   auditLogs       AuditLog[]
 
-  // ⬅ THÊM MỚI: lưu refresh token đã cấp cho user này (phục vụ rotation + revoke)
+  // NEW: stores refresh tokens issued to this user (for rotation + revocation)
   refreshTokens RefreshToken[]
 
   @@index([departmentId])
   @@map("users")
 }
 
-// ⬅ MODEL MỚI — bản schema cũ thiếu bảng này dù auth flow cần refresh token rotation
+// NEW MODEL — the old schema was missing this table even though
+// the authentication flow requires refresh token rotation.
 model RefreshToken {
   id        Int       @id @default(autoincrement())
-  // Không bao giờ lưu refresh token dạng plaintext — chỉ lưu hash (sha256)
+  // Never store the refresh token in plaintext — only store its SHA-256 hash.
   tokenHash String    @unique
   userId    Int
   expiresAt DateTime
-  // null = còn hiệu lực; có giá trị = đã bị thu hồi (do rotate, logout, hoặc phát hiện reuse)
+  // null = still valid; a value = revoked (due to rotation, logout, or detected reuse)
   revokedAt DateTime?
   createdAt DateTime  @default(now())
 
@@ -80,7 +81,7 @@ model RefreshToken {
 }
 
 // =====================================================================
-// PROJECTS (nhom cac task lai voi nhau)
+// PROJECTS (group related tasks together)
 // =====================================================================
 
 model Project {
@@ -164,9 +165,9 @@ model Task {
   @@index([assignedToId])
   @@index([createdById])
   @@index([reviewedById])
-  // ⬅ THÊM MỚI: phục vụ query "task sắp đến hạn" (dùng cho NotificationType.TASK_DUE_SOON)
+  // NEW: supports queries for "tasks due soon" (used by NotificationType.TASK_DUE_SOON)
   @@index([dueDate])
-  // ⬅ THÊM MỚI: phục vụ dashboard lọc theo project + trạng thái duyệt
+  // NEW: supports dashboard filtering by project + approval status
   @@index([projectId, approvalStatus])
   @@map("tasks")
 }
@@ -184,7 +185,7 @@ model TaskDependency {
 }
 
 // =====================================================================
-// TAGS / NHAN
+// TAGS
 // =====================================================================
 
 model Tag {
@@ -209,7 +210,7 @@ model TaskTag {
 }
 
 // =====================================================================
-// PROGRESS REPORT (bao cao tien do)
+// PROGRESS REPORT
 // =====================================================================
 
 model ProgressReport {
@@ -230,7 +231,7 @@ model ProgressReport {
 }
 
 // =====================================================================
-// COMMENTS (trao doi trong task)
+// COMMENTS (task discussions)
 // =====================================================================
 
 model Comment {
@@ -250,7 +251,7 @@ model Comment {
 }
 
 // =====================================================================
-// ATTACHMENTS (file dinh kem)
+// ATTACHMENTS (attached files)
 // =====================================================================
 
 model Attachment {
@@ -272,7 +273,7 @@ model Attachment {
 }
 
 // =====================================================================
-// NOTIFICATIONS (thong bao)
+// NOTIFICATIONS
 // =====================================================================
 
 model Notification {
@@ -281,7 +282,7 @@ model Notification {
   type              NotificationType
   title             String
   message           String?          @db.Text
-  // ⬅ THÊM MỚI: để client biết click vào thì điều hướng tới resource nào
+  // NEW: allows the client to know which resource to navigate to when clicked
   relatedEntityType String?
   relatedEntityId   Int?
   isRead            Boolean          @default(false)
@@ -294,7 +295,7 @@ model Notification {
 }
 
 // =====================================================================
-// AUDIT LOG (nhat ky thay doi - phuc vu truy vet)
+// AUDIT LOG (change history - for traceability)
 // =====================================================================
 
 model AuditLog {
