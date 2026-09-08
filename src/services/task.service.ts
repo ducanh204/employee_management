@@ -53,6 +53,7 @@ const taskSelect = {
  * ADMIN is exempt from this check. If projectId is not provided,
  * the membership check is skipped.
  */
+// LEFT JOIN
 async function assertProjectMembershipIfNeeded(
   projectId: number | undefined,
   userId: number
@@ -282,3 +283,4 @@ export async function deleteTask(
     where: { id },
   });
 }
+

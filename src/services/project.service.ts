@@ -225,8 +225,6 @@ export async function addMember(
       },
     });
   } catch (err) {
-    // P2002: violates @@unique([projectId, userId]),
-    // which means the user is already a member of this project.
     if (
       err instanceof Prisma.PrismaClientKnownRequestError &&
       err.code === "P2002"
