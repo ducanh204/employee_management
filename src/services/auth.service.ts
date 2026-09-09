@@ -7,7 +7,7 @@ import {
   getRefreshTokenExpiryDate,
 } from "../utils/token.util";
 import { ConflictError, UnauthorizedError } from "@/errors/app-error";
-import { RegisterInput, LoginInput } from "@/validators/auth.validator";
+import { RegisterDto, LoginDto } from "@/validators/auth.validator";
 import { logger } from "../utils/logger";
 
 // Data returned to the client — NEVER expose the password field
@@ -37,7 +37,7 @@ async function issueTokenPair(
     sub: user.id,
     email: user.email,
     role: user.role,
-    departmentId: null, // departmentId is not included in the access token payload for now
+    departmentId: null, 
   });
 
   const refreshTokenPlain = generateRefreshTokenPlain();
@@ -56,7 +56,7 @@ async function issueTokenPair(
   };
 }
 
-export async function register(input: RegisterInput) {
+export async function register(input: RegisterDto) {
   const existing = await prisma.user.findUnique({
     where: { email: input.email },
   });
@@ -82,7 +82,7 @@ export async function register(input: RegisterInput) {
   return toSafeUser(user);
 }
 
-export async function login(input: LoginInput) {
+export async function login(input: LoginDto) {
   const user = await prisma.user.findUnique({
     where: { email: input.email },
   });

@@ -33,6 +33,7 @@ interface CreateProjectBody {
   status?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface UpdateProjectBody extends Partial<CreateProjectBody> {}
 
 interface AddMemberBody {

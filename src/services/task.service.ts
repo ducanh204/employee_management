@@ -46,14 +46,7 @@ const taskSelect = {
   createdAt: true,
 } satisfies Prisma.TaskSelect;
 
-/**
- * If the task is associated with a project, the requester must be
- * the project manager or a project member.
- *
- * ADMIN is exempt from this check. If projectId is not provided,
- * the membership check is skipped.
- */
-// LEFT JOIN
+
 async function assertProjectMembershipIfNeeded(
   projectId: number | undefined,
   userId: number

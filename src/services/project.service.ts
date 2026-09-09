@@ -7,8 +7,8 @@ import {
 import { AuthUser } from "../types/express";
 import { Role, Prisma } from "../generated/client";
 import {
-  CreateProjectInput,
-  UpdateProjectInput,
+  CreateProjectDto,
+  UpdateProjectDto,
   ListProjectsQuery,
 } from "../validators/project.validator";
 
@@ -88,11 +88,7 @@ export async function createProject(
       name: input.name,
       description: input.description,
       departmentId: input.departmentId,
-
-      // By default, the requester becomes the manager
-      // if no other manager is specified.
       managerId: input.managerId ?? requester.id,
-
       startDate: input.startDate,
       endDate: input.endDate,
       status: input.status,

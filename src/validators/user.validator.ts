@@ -8,8 +8,6 @@ export const listUsersQuerySchema = z.object({
   departmentId: z.coerce.number().int().positive().optional(),
 });
 
-export type ListUsersQuery = z.infer<typeof listUsersQuerySchema>;
-
 export const createUserSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8, "Password must be at least 8 characters"),
@@ -19,8 +17,6 @@ export const createUserSchema = z.object({
   avatarUrl: z.string().url().optional(),
   phoneNumber: z.string().optional(),
 });
-
-export type CreateUserInput = z.infer<typeof createUserSchema>;
 
 export const updateUserSchema = z.object({
   name: z.string().min(1).optional(),
@@ -32,4 +28,16 @@ export const updateUserSchema = z.object({
   role: z.nativeEnum(Role).optional(), // ADMIN only
 });
 
-export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+export type ListUsersQuery = z.infer<typeof listUsersQuerySchema>;
+export type CreateUserDt0 = z.infer<typeof createUserSchema>;
+export type UpdateUserDto = z.infer<typeof updateUserSchema>;
+
+// type UpdateUserInput = Partial<{
+//   name: string;
+//   isActive: boolean;
+//   avatarUrl: string;
+//   departmentId: number;
+//   phoneNumber: string;
+//   password: string;
+//   role: Role; // ADMIN only
+// }>;

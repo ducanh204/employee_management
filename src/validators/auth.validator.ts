@@ -19,6 +19,6 @@ export const refreshSchema = z.object({
   refreshToken: z.string().min(1, "The refresh token is required."),
 });
 
-export type RegisterInput = z.infer<typeof registerSchema>;
-export type LoginInput = z.infer<typeof loginSchema>;
-export type RefreshInput = z.infer<typeof refreshSchema>;
+export type RegisterDto = z.infer<typeof registerSchema>;
+export type LoginDto = z.infer<typeof loginSchema>;
+export type RefresDto = z.infer<typeof refreshSchema>;

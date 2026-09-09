@@ -6,8 +6,8 @@ import {
   Header,
   Patch,
   Path,
-  Post,
-  Put,
+  // Post,
+  // Put,
   Query,
   Route,
   Security,
@@ -18,20 +18,20 @@ import * as userService from "@/services/user.service";
 import { parseAuthHeader } from "@/middleware/authenticate";
 
 import {
-  createUserSchema,
+  // createUserSchema,
   updateUserSchema,
   listUsersQuerySchema,
 } from "@/validators/user.validator";
 
-interface CreateUserBody {
-  email: string;
-  password: string;
-  name: string;
-  role?: string;
-  departmentId?: number;
-  avatarUrl?: string;
-  phoneNumber?: string;
-}
+// interface CreateUserBody {
+//   email: string;
+//   password: string;
+//   name: string;
+//   role?: string;
+//   departmentId?: number;
+//   avatarUrl?: string;
+//   phoneNumber?: string;
+// }
 
 interface UpdateUserBody {
   name?: string;

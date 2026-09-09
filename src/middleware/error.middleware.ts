@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import {  NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { ValidateError } from "tsoa";
 
@@ -10,6 +10,7 @@ export function errorMiddleware(
   err: unknown,
   req: Request,
   res: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: NextFunction
 ): void {
   // 1. Business errors explicitly thrown by services or middleware
